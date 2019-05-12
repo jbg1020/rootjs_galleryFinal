@@ -23,6 +23,10 @@ function initiateApp(){
 	/*advanced: add jquery sortable call here to make the gallery able to be sorted
 		//on change, rebuild the images array into the new order
 	*/
+	$( function() {
+		$( "#gallery" ).sortable();
+		$( "#gallery" ).disableSelection();
+	} );
 	makeGallery(pictures);
 	addModalCloseHandler();
 }
@@ -31,21 +35,40 @@ function makeGallery(imageArray){
 
 	//create a loop to go through the pictures
 		//create the elements needed for each picture, store the elements in variable
-
 		//attach a click handler to the figure you create.  call the "displayImage" function.  
 
 		//append the element to the #gallery section
+
+	for (i=0; i<pictures.length; i++) {
+		var figureTab = $("<figure>").addClass('imageGallery col-xs-12 col-sm-6 col-md-4');
+		figureTab.css("background-image", 'url('+pictures[i]+')');
+		var figureCap = $("<figurecaption>").text(pictures[i]);
+		imageArray = figureTab.append(figureCap);
+		imageArray.click(displayImage);
+		$("#gallery").append(imageArray);
+	}
 
 }
 
 function addModalCloseHandler(){
 	//add a click handler to the img element in the image modal.  When the element is clicked, close the modal
-	//for more info, check here: https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp	
+	//for more info, check here: https://www.w3schools.com/bootstrap/bootstrap_ref_js_modal.asp
+	$(".modal-body").click(function(){
+		$("#galleryModal").modal("hide");
+	})
 }
 
 function displayImage(){
 	//find the url of the image by grabbing the background-image source, store it in a variable
 	//grab the direct url of the image by getting rid of the other pieces you don't need
+
+	var imgURL = $(this).css('background-image');
+	var imgFile = imgURL.slice(imgURL.lastIndexOf('/')+1);
+	var actualURL = imgURL.replace(/url/, '').replace(/[")(]/g,'');
+	var modalTitleWithoutParenth = imgFile.replace(/[")(]/g,'');
+	$(".modal-title").text(modalTitleWithoutParenth);
+	$("img").attr("src",actualURL);
+	$("#galleryModal").modal("show");
 
 	//grab the name from the file url, ie the part without the path.  so "images/pexels-photo-132037.jpeg" would become
 		// pexels-photo-132037
